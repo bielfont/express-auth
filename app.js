@@ -78,13 +78,14 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    if (req.user) {
-        res.cookie('AuthToken', '') // Quan fem logout el token es buida
-        req.user = null
-        res.render('home', {
-            user: req.user
-        });
-    }
+
+    res.cookie('AuthToken', '') // Quan fem logout el token es buida
+    //res.clearCookie("AuthToken")
+    req.user = null
+    res.render('home', {
+        user: req.user
+    });
+
 });
 
 app.post('/register', (req, res) => {
@@ -121,21 +122,36 @@ app.post('/register', (req, res) => {
 
 app.get('/admin', auth.authenticateJWT, auth.authorizeAdmin, (req, res) => { // Renderitzem admin passant per dos middlewares. El primer per a verificar el token i el segon per a verificar que l'usuari és admin
     res.render('admin');
+
 });
 
 app.get('/protected', auth.authenticateJWT, (req, res) => { // Al protected poden accedir tots els usuaris autenticats, per tant, sols comprovem que el token siga valid
     res.render('protected');
 });
 
+app.get('/users', auth.authenticateJWT, auth.authorizeAdmin, (req, res) => { // Renderitzem admin passant per dos middlewares. El primer per a verificar el token i el segon per a verificar que l'usuari és admin
+    
+    sql.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, rows) => {
+        if (!err) {
+          res.render('view-user', { rows });
+        } else {
+          console.log(err);
+        }
+        console.log('The data from user table: \n', rows);
+      });
+
+});
+
 
 //app.listen(3000);
-const port = process.env.PORT || 9999;
-app.listen(port, () => {
-    console.log('Biel Server listening at http://localhost:' + port);
+
+var HTTP_PORT = 9999 
+// Start server
+app.listen(HTTP_PORT, "127.0.0.1", () => {
+    console.log("Servidor BIEL escoltant a l'adreça http://localhost:%PORT%".replace("%PORT%",HTTP_PORT))
 });
 
 //Respuesta ante consultas de rutas inexistentes
-
 app.use(function (req, res) {
     res.status(404).json({ "error": "Invalid endpoint. V1"});
     
