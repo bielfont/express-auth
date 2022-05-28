@@ -95,7 +95,7 @@ app.post('/register', (req, res) => {
         const hashedPassword = auth.getHashedPassword(password);
 
         var sql ='INSERT INTO user (name, email, password, role) VALUES (?,?,?,?)'
-        var params =[firstName + lastName, email, hashedPassword, adminCheck === true ? 'admin' : 'user'] // Al ser adminCheck boolean, si està a true és perque l'usuari serà admin, si no, es user
+        var params =[firstName + lastName, email, hashedPassword, adminCheck === "on" ? 'admin' : 'user'] // Al ser adminCheck boolean, si està a true és perque l'usuari serà admin, si no, es user
         db.run(sql, params, function (err) {
             if (err){ // Si la inserció dona error és perque l'usuari ja existeix
                 console.log(err)
@@ -128,4 +128,15 @@ app.get('/protected', auth.authenticateJWT, (req, res) => { // Al protected pode
 });
 
 
-app.listen(3000);
+//app.listen(3000);
+const port = process.env.PORT || 9999;
+app.listen(port, () => {
+    console.log('Biel Server listening at http://localhost:' + port);
+});
+
+//Respuesta ante consultas de rutas inexistentes
+
+app.use(function (req, res) {
+    res.status(404).json({ "error": "Invalid endpoint. V1"});
+    
+});
