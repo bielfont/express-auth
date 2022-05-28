@@ -131,9 +131,28 @@ app.get('/protected', auth.authenticateJWT, (req, res) => { // Al protected pode
 
 app.get('/users', auth.authenticateJWT, auth.authorizeAdmin, (req, res) => { // Renderitzem admin passant per dos middlewares. El primer per a verificar el token i el segon per a verificar que l'usuari és admin
     
-    sql.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, rows) => {
+    var sql ='select * from user'
+    //var params =[firstName + lastName, email, hashedPassword, adminCheck === "on" ? 'admin' : 'user'] 
+
+    db.all(sql, (err, rows) => {
         if (!err) {
           res.render('view-user', { rows });
+        } else {
+          console.log(err);
+        }
+        console.log('The data from user table: \n', rows);
+      });
+
+});
+
+app.get('/user', auth.authenticateJWT, (req, res) => { 
+  
+    var sql ="select * from user where id = ?"
+  
+
+    db.all(sql,[req.user.id], (err, rows) => {
+        if (!err) {
+          res.render('view-user-id', { rows });
         } else {
           console.log(err);
         }

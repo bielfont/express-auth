@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">View Users</li>
+    <li class="breadcrumb-item active" aria-current="page">Ver Datos Usuario Autenticado</li>
   </ol>
 </nav>
 
@@ -9,7 +9,7 @@
   {{#each rows}}
   <div class="row mb-5">
     <div class="col text-center">
-      <h3>{{this.Name}}</h3>
+      <h3>{{this.id}} {{this.name}}</h3>
     </div>
   </div>
   <div class="row">
